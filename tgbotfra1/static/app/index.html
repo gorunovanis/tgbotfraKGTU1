@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>FoodApp — дневник</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <link rel="stylesheet" href="style.css?v=3" />
+</head>
+<body>
+  <div class="app-bg" aria-hidden="true"></div>
+  <div id="root" class="onboarding-visible">
+    <!-- Вход / регистрация -->
+    <section id="screen-auth" class="screen onboarding-screen active">
+      <div class="onboarding-card">
+        <h2>FoodApp</h2>
+        <p class="onboarding-text">Войдите или создайте аккаунт</p>
+        <p id="auth-error" class="onboarding-error form-error" style="display:none"></p>
+        <div id="auth-panel-login" class="onboarding-form">
+          <label>Email <input type="email" id="auth-email" autocomplete="email" /></label>
+          <label>Пароль <input type="password" id="auth-password" autocomplete="current-password" /></label>
+          <button type="button" class="btn btn-primary btn-block" id="auth-login-btn">Войти</button>
+          <p style="margin-top:12px;"><button type="button" class="btn" id="auth-show-register">Регистрация</button></p>
+        </div>
+        <div id="auth-panel-register" class="onboarding-form hidden">
+          <label>Email <input type="email" id="reg-email" autocomplete="email" /></label>
+          <label>Пароль (от 8 символов) <input type="password" id="reg-password" autocomplete="new-password" /></label>
+          <label>Имя <input type="text" id="reg-name" placeholder="Как к вам обращаться" /></label>
+          <button type="button" class="btn btn-primary btn-block" id="auth-register-btn">Зарегистрироваться</button>
+          <p style="margin-top:12px;"><button type="button" class="btn" id="auth-show-login">Уже есть аккаунт</button></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Первичные данные (вес / рост) -->
+    <section id="screen-onboarding" class="screen onboarding-screen">
+      <div class="onboarding-card">
+        <h2>Профиль</h2>
+        <p class="onboarding-text">Укажите данные для учёта питания и расчёта норм</p>
+        <p id="onboarding-error" class="onboarding-error form-error" style="display:none"></p>
+        <div class="onboarding-form">
+          <label>Имя <input type="text" id="onboarding-name" placeholder="Как к вам обращаться?" /></label>
+          <label>Вес (кг) <input type="number" id="onboarding-weight" step="0.1" min="20" max="300" placeholder="70" required /></label>
+          <label>Рост (см) <input type="number" id="onboarding-height" step="0.1" min="100" max="250" placeholder="170" required /></label>
+          <label>Цель
+            <select id="onboarding-goal">
+              <option value="lose">Похудение</option>
+              <option value="maintain">Поддержание</option>
+              <option value="gain">Набор массы</option>
+            </select>
+          </label>
+          <div id="onboarding-goal-hints" class="goal-hints" aria-live="polite"></div>
+          <button type="button" class="btn btn-primary btn-block" id="onboarding-submit">Продолжить</button>
+          <p style="margin-top:12px;"><button type="button" class="btn" id="btn-logout" style="font-size:0.85rem;">Выйти из аккаунта</button></p>
+        </div>
+      </div>
+    </section>
+
+    <header class="header">
+      <button type="button" class="nav-btn" data-nav="main" aria-label="Главная">🏠</button>
+      <h1 class="title" id="screen-title">Сегодня</h1>
+      <div class="header-end">
+        <a class="nav-landing" href="../index.html" title="О проекте FoodApp">О сайте</a>
+        <button type="button" class="nav-btn" data-nav="profile" aria-label="Профиль">👤</button>
+      </div>
+    </header>
+
+    <main class="main">
+      <section id="screen-main" class="screen">
+        <div class="summary-card" id="summary-card"><span class="stat">Загрузка…</span></div>
+        <div id="kbzhu-hints" class="kbzhu-hints" hidden></div>
+        <div class="water-quick">
+          <p class="water-label">💧 Вода</p>
+          <div class="water-buttons" id="water-buttons"></div>
+          <p class="water-progress" id="water-progress"></p>
+        </div>
+        <nav class="grid-nav">
+          <button type="button" class="tile" data-nav="meals">🍽 Блюда</button>
+          <button type="button" class="tile" data-nav="steps">👟 Шаги</button>
+          <button type="button" class="tile" data-nav="stats">📊 Статистика</button>
+          <button type="button" class="tile" data-nav="workouts">🏋️ Тренировки</button>
+          <button type="button" class="tile" data-nav="ai">🤖 AI</button>
+        </nav>
+      </section>
+
+      <section id="screen-meals" class="screen">
+        <div class="add-meal-actions">
+          <button type="button" class="btn btn-primary" id="btn-meal-photo">📷 По фото</button>
+          <button type="button" class="btn" id="btn-meal-scan">📱 Скан штрих-кода</button>
+          <button type="button" class="btn" id="btn-meal-manual">✏️ Вручную</button>
+        </div>
+        <p class="hint">По фото: оценка КБЖУ встроена в код (снимок на сервер не отправляется). При необходимости поправьте цифры в форме.</p>
+        <input type="file" accept="image/*" capture="environment" id="input-photo" class="hidden" />
+        <div id="meals-list" class="meals-list"></div>
+      </section>
+
+      <div id="modal-barcode" class="modal hidden">
+        <div class="modal-content scanner-modal">
+          <h3>Наведите камеру на штрих-код</h3>
+          <div id="barcode-scanner-container"></div>
+          <p class="scanner-hint">Штрих-код распознается автоматически. Или введите код вручную.</p>
+          <button type="button" class="btn" id="barcode-manual">✏️ Ввести код вручную</button>
+          <button type="button" class="btn" id="barcode-cancel">Отмена</button>
+        </div>
+      </div>
+
+      <div id="modal-meal" class="modal hidden">
+        <div class="modal-content">
+          <h3 id="modal-meal-title">Добавить блюдо</h3>
+          <input type="text" id="meal-name" placeholder="Название" />
+          <div class="row-4">
+            <label>К <input type="number" id="meal-cal" step="1" placeholder="0" /></label>
+            <label>Б <input type="number" id="meal-protein" step="0.1" placeholder="0" /></label>
+            <label>Ж <input type="number" id="meal-fat" step="0.1" placeholder="0" /></label>
+            <label>У <input type="number" id="meal-carbs" step="0.1" placeholder="0" /></label>
+          </div>
+          <input type="hidden" id="meal-source" value="manual" />
+          <input type="hidden" id="meal-barcode" value="" />
+          <div class="modal-actions">
+            <button type="button" class="btn" id="modal-meal-cancel">Отмена</button>
+            <button type="button" class="btn btn-primary" id="modal-meal-save">Добавить</button>
+          </div>
+        </div>
+      </div>
+
+      <section id="screen-steps" class="screen">
+        <div class="steps-card">
+          <p>Шаги за сегодня</p>
+          <input type="number" id="steps-input" min="0" placeholder="0" />
+          <button type="button" class="btn btn-primary" id="steps-save">Сохранить</button>
+        </div>
+        <p class="hint">Цель и график — в разделе Статистика.</p>
+      </section>
+
+      <section id="screen-stats" class="screen">
+        <div class="period-tabs">
+          <button type="button" class="period-btn active" data-days="7">7 дн</button>
+          <button type="button" class="period-btn" data-days="14">14 дн</button>
+          <button type="button" class="period-btn" data-days="31">31 дн</button>
+        </div>
+        <div id="stats-charts" class="stats-charts"></div>
+      </section>
+
+      <section id="screen-workouts" class="screen">
+        <div id="workouts-hint-banner" class="workouts-hint-banner hidden" aria-live="polite"></div>
+        <div class="workouts-actions">
+          <button type="button" class="btn btn-primary" id="btn-add-workout">➕ Записать подходы</button>
+        </div>
+        <div id="workouts-list" class="workouts-list"></div>
+        <div class="records-block">
+          <h4>🏆 Рекорды</h4>
+          <div id="records-list"></div>
+        </div>
+      </section>
+
+      <div id="modal-workout" class="modal hidden">
+        <div class="modal-content">
+          <h3>Записать упражнение</h3>
+          <select id="workout-exercise"></select>
+          <div id="workout-sets"></div>
+          <button type="button" class="btn" id="workout-add-set">+ подход</button>
+          <div class="modal-actions">
+            <button type="button" class="btn" id="modal-workout-cancel">Отмена</button>
+            <button type="button" class="btn btn-primary" id="modal-workout-save">Сохранить</button>
+          </div>
+        </div>
+      </div>
+
+      <section id="screen-ai" class="screen">
+        <p class="hint ai-local-hint">Помощник встроен в приложение: ответы считаются в браузере, без ключей и без загрузки моделей.</p>
+        <div class="ai-chat" id="ai-chat"></div>
+        <div class="ai-input-row">
+          <input type="text" id="ai-input" placeholder="Вопрос о питании или тренировках..." />
+          <button type="button" class="btn btn-primary" id="ai-send">Отправить</button>
+        </div>
+      </section>
+
+      <section id="screen-profile" class="screen">
+        <div class="profile-form">
+          <p class="profile-email-line">Email: <span id="profile-email-display"></span></p>
+          <label>Вес (кг) <input type="number" id="profile-weight" step="0.1" /></label>
+          <label>Рост (см) <input type="number" id="profile-height" step="0.1" /></label>
+          <label>Цель
+            <select id="profile-goal">
+              <option value="lose">Похудение</option>
+              <option value="maintain">Поддержание</option>
+              <option value="gain">Набор массы</option>
+            </select>
+          </label>
+          <label>Активность
+            <select id="profile-activity">
+              <option value="sedentary">Сидячий образ</option>
+              <option value="light">Лёгкая</option>
+              <option value="moderate">Умеренная</option>
+              <option value="active">Активная</option>
+              <option value="very_active">Очень высокая</option>
+            </select>
+          </label>
+          <label class="checkbox-label"><input type="checkbox" id="profile-steps-enabled" /> Включить учёт шагов</label>
+          <label>Цель шагов <input type="number" id="profile-steps-goal" min="0" /></label>
+          <button type="button" class="btn btn-primary" id="profile-save">Сохранить</button>
+          <button type="button" class="btn btn-spaced-top" id="profile-logout">Выйти</button>
+        </div>
+        <div class="profile-extra">
+          <button type="button" class="btn" data-nav="weight-history">📉 История веса</button>
+          <button type="button" class="btn" data-nav="measurements">📏 Замеры тела</button>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="app.js?v=3"></script>
+</body>
+</html>

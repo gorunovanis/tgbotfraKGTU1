@@ -1,0 +1,939 @@
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.health-group-title {
+    font-size: clamp(24px, 5vw, 36px);
+    font-weight: bold;
+    color: rgba(255, 255, 255, 1);
+    text-align: center;
+    margin-bottom: 25px;
+    margin-top: 30px;
+    text-shadow: 0 3px 20px rgba(0, 0, 0, 0.4),
+                 0 0 40px rgba(255, 255, 255, 0.3);
+    animation: fadeInUp 0.8s ease-out;
+    letter-spacing: 2px;
+    display: block;
+    z-index: 10;
+    position: relative;
+}
+
+/* Обертка для поиска с подсказкой */
+.search-wrapper {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+}
+
+/* Красный кружок с подсказкой */
+.health-group-hint {
+    position: relative;
+    margin-bottom: 15px;
+    z-index: 5;
+}
+
+.hint-circle {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ff3333, #cc0000, #ff6666);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 30px rgba(255, 51, 51, 0.4),
+                0 0 0 4px rgba(255, 255, 255, 0.2),
+                inset 0 2px 10px rgba(255, 255, 255, 0.3);
+    animation: pulse 2s ease-in-out infinite;
+    position: relative;
+    overflow: hidden;
+}
+
+.hint-circle::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+    animation: rotate 15s linear infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 8px 30px rgba(255, 51, 51, 0.4),
+                    0 0 0 4px rgba(255, 255, 255, 0.2),
+                    inset 0 2px 10px rgba(255, 255, 255, 0.3);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 12px 40px rgba(255, 51, 51, 0.6),
+                    0 0 0 6px rgba(255, 255, 255, 0.3),
+                    inset 0 2px 10px rgba(255, 255, 255, 0.4);
+    }
+}
+
+.hint-text {
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    padding: 20px;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    z-index: 1;
+    position: relative;
+    line-height: 1.4;
+}
+
+body img {
+    opacity: 0;
+    animation: fadeInUp 1s ease-out 0.2s forwards;
+}
+
+.glass-text {
+    opacity: 0;
+    animation: fadeInUp 1s ease-out 0.5s forwards;
+}
+
+.search-container {
+    opacity: 0;
+    animation: fadeInUp 1s ease-out 0.8s forwards;
+}
+
+.search-dropdown {
+    position: absolute;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    min-width: 300px;
+    margin-top: 10px;
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0.9);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.search-dropdown.show {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1);
+}
+
+.search-dropdown a {
+    color: #333;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    border-radius: 10px;
+}
+
+.search-dropdown a:hover {
+    background-color: rgba(255, 102, 178, 0.1);
+}
+
+#complex-container {
+    display: none;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+}
+
+.complex-link, .full-name-link {
+    color: #333;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: bold;
+    background: linear-gradient(45deg, #ff66b2, #ff3399);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.complex-link::after, .full-name-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -5px;
+    left: 0;
+    background: linear-gradient(45deg, #ff66b2, #ff3399);
+    transition: width 0.3s ease;
+}
+
+.complex-link:hover::after, .full-name-link:hover::after {
+    width: 100%;
+}
+
+.complex-link:hover, .full-name-link:hover {
+    transform: scale(1.05);
+}
+
+/* Floating decorative shapes */
+.floating-shapes {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 998;
+    pointer-events: none;
+}
+
+.shape {
+    position: absolute;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(255, 102, 178, 0.3), rgba(255, 51, 153, 0.2));
+    filter: blur(40px);
+    animation: float 20s infinite ease-in-out;
+}
+
+.shape-1 {
+    width: 200px;
+    height: 200px;
+    top: 10%;
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.shape-2 {
+    width: 150px;
+    height: 150px;
+    top: 60%;
+    right: 15%;
+    animation-delay: 2s;
+    background: linear-gradient(135deg, rgba(255, 0, 204, 0.3), rgba(237, 11, 116, 0.2));
+}
+
+.shape-3 {
+    width: 180px;
+    height: 180px;
+    bottom: 15%;
+    left: 20%;
+    animation-delay: 4s;
+    background: linear-gradient(135deg, rgba(255, 102, 178, 0.25), rgba(255, 51, 153, 0.15));
+}
+
+.shape-4 {
+    width: 120px;
+    height: 120px;
+    top: 30%;
+    right: 30%;
+    animation-delay: 6s;
+    background: linear-gradient(135deg, rgba(255, 0, 204, 0.25), rgba(255, 102, 178, 0.2));
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0.6;
+    }
+    25% {
+        transform: translate(30px, -30px) scale(1.1);
+        opacity: 0.8;
+    }
+    50% {
+        transform: translate(-20px, 20px) scale(0.9);
+        opacity: 0.7;
+    }
+    75% {
+        transform: translate(20px, 30px) scale(1.05);
+        opacity: 0.75;
+    }
+}
+
+/* Auth container styles */
+#auth-container {
+    margin-bottom: 20px;
+    z-index: 1000;
+    position: relative;
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Form header */
+.form-header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.form-title {
+    font-size: 28px;
+    font-weight: bold;
+    background: linear-gradient(135deg, #ff66b2, #ff3399, #ff00cc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 0 0 8px 0;
+    animation: gradientShift 3s ease infinite;
+    background-size: 200% 200%;
+}
+
+@keyframes gradientShift {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+.form-subtitle {
+    color: rgba(100, 100, 100, 0.8);
+    font-size: 14px;
+    margin: 0;
+    font-weight: normal;
+}
+
+#login-form, #register-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    max-width: 380px;
+    margin: 0 auto;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.95));
+    padding: 40px 35px;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2),
+                0 0 0 1px rgba(255, 255, 255, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(20px) saturate(180%);
+    animation: slideIn 0.6s ease-out;
+    opacity: 1;
+    transform: translateY(0);
+    position: relative;
+    overflow: hidden;
+}
+
+#login-form::before, #register-form::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 102, 178, 0.1) 0%, transparent 70%);
+    animation: rotate 20s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+#login-form {
+    border: 2px solid rgba(255, 102, 178, 0.5);
+    box-shadow: 0 20px 60px rgba(255, 102, 178, 0.25),
+                0 0 0 1px rgba(255, 102, 178, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4),
+                0 0 80px rgba(255, 102, 178, 0.1);
+}
+
+#login-form:hover {
+    border-color: rgba(255, 102, 178, 0.8);
+    box-shadow: 0 25px 70px rgba(255, 102, 178, 0.35),
+                0 0 0 1px rgba(255, 102, 178, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.5),
+                0 0 100px rgba(255, 102, 178, 0.15);
+    transform: translateY(-5px) scale(1.01);
+}
+
+#register-form {
+    border: 2px solid rgba(76, 175, 80, 0.5);
+    box-shadow: 0 20px 60px rgba(76, 175, 80, 0.25),
+                0 0 0 1px rgba(76, 175, 80, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4),
+                0 0 80px rgba(76, 175, 80, 0.1);
+}
+
+#register-form:hover {
+    border-color: rgba(76, 175, 80, 0.8);
+    box-shadow: 0 25px 70px rgba(76, 175, 80, 0.35),
+                0 0 0 1px rgba(76, 175, 80, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.5),
+                0 0 100px rgba(76, 175, 80, 0.15);
+    transform: translateY(-5px) scale(1.01);
+}
+
+/* Input wrapper for icons */
+.input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.input-wrapper .input-icon {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 18px;
+    opacity: 0.4;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.input-wrapper input:focus + .input-icon {
+    opacity: 0.7;
+    transform: translateY(-50%) scale(1.1);
+}
+
+#login-form input, #register-form input {
+    padding: 14px 45px 14px 18px;
+    border: 2px solid rgba(200, 200, 200, 0.4);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.95);
+    font-size: 15px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    outline: none;
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.04),
+                0 1px 0 rgba(255, 255, 255, 0.8);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#login-form input:focus, #register-form input:focus {
+    border-color: #ff66b2;
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0 0 0 4px rgba(255, 102, 178, 0.15),
+                inset 0 2px 8px rgba(0, 0, 0, 0.04),
+                0 2px 12px rgba(255, 102, 178, 0.1);
+    transform: translateY(-2px);
+    padding-left: 20px;
+}
+
+#login-form input::placeholder, #register-form input::placeholder {
+    color: rgba(150, 150, 150, 0.7);
+    transition: all 0.3s ease;
+    font-weight: normal;
+}
+
+#login-form input:focus::placeholder, #register-form input:focus::placeholder {
+    color: rgba(200, 200, 200, 0.5);
+    transform: translateX(5px);
+}
+
+/* Form divider */
+.form-divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 8px 0 5px 0;
+    position: relative;
+}
+
+.form-divider::before,
+.form-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(200, 200, 200, 0.5), transparent);
+}
+
+.form-divider span {
+    padding: 0 15px;
+    color: rgba(150, 150, 150, 0.7);
+    font-size: 13px;
+    font-weight: normal;
+}
+
+/* Кнопки входа и регистрации */
+#login-btn, #register-btn {
+    position: relative;
+    overflow: hidden;
+    padding: 0;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 16px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#login-btn .btn-text, #register-btn .btn-text {
+    position: relative;
+    z-index: 2;
+    display: block;
+    padding: 14px 24px;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+#login-btn .btn-shine, #register-btn .btn-shine {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transition: left 0.6s ease;
+    z-index: 3;
+}
+
+#login-btn:hover .btn-shine, #register-btn:hover .btn-shine {
+    left: 100%;
+}
+
+#login-btn {
+    background: linear-gradient(135deg, #ff66b2, #ff3399, #ff00cc, #ff66b2);
+    background-size: 300% 300%;
+    box-shadow: 0 6px 20px rgba(255, 102, 178, 0.5),
+                0 2px 8px rgba(255, 102, 178, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3),
+                0 0 30px rgba(255, 102, 178, 0.2);
+    animation: gradientMove 3s ease infinite;
+}
+
+@keyframes gradientMove {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+#login-btn:hover {
+    transform: translateY(-4px) scale(1.03);
+    box-shadow: 0 10px 35px rgba(255, 102, 178, 0.6),
+                0 4px 15px rgba(255, 102, 178, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4),
+                0 0 50px rgba(255, 102, 178, 0.3);
+    background-position: right center;
+}
+
+#login-btn:active {
+    transform: translateY(-2px) scale(1.01);
+    box-shadow: 0 4px 15px rgba(255, 102, 178, 0.5);
+}
+
+#login-btn:hover .btn-text {
+    text-shadow: 0 2px 10px rgba(255, 255, 255, 0.5);
+}
+
+#register-btn {
+    background: linear-gradient(135deg, #4CAF50, #45a049, #3d8b40, #4CAF50);
+    background-size: 300% 300%;
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.5),
+                0 2px 8px rgba(76, 175, 80, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3),
+                0 0 30px rgba(76, 175, 80, 0.2);
+    animation: gradientMove 3s ease infinite;
+}
+
+#register-btn:hover {
+    transform: translateY(-4px) scale(1.03);
+    box-shadow: 0 10px 35px rgba(76, 175, 80, 0.6),
+                0 4px 15px rgba(76, 175, 80, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4),
+                0 0 50px rgba(76, 175, 80, 0.3);
+    background-position: right center;
+}
+
+#register-btn:active {
+    transform: translateY(-2px) scale(1.01);
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.5);
+}
+
+#register-btn:hover .btn-text {
+    text-shadow: 0 2px 10px rgba(255, 255, 255, 0.5);
+}
+
+/* Кнопки переключения между формами */
+#show-register, #show-login {
+    padding: 12px 20px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.9));
+    color: #333;
+    border: 2px solid rgba(255, 102, 178, 0.4);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    font-weight: 500;
+    font-size: 14px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    text-align: center;
+    width: 100%;
+    margin-top: 8px;
+}
+
+#show-register::before, #show-login::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 102, 178, 0.15), transparent);
+    transform: translate(-50%, -50%);
+    transition: width 0.5s ease, height 0.5s ease;
+}
+
+#show-register:hover::before, #show-login:hover::before {
+    width: 400px;
+    height: 400px;
+}
+
+#show-register:hover, #show-login:hover {
+    background: linear-gradient(135deg, rgba(255, 102, 178, 0.12), rgba(255, 51, 153, 0.08));
+    border-color: #ff3399;
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 6px 20px rgba(255, 102, 178, 0.25),
+                0 2px 8px rgba(255, 102, 178, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    color: #ff3399;
+}
+
+#show-register:active, #show-login:active {
+    transform: translateY(-1px) scale(1);
+}
+
+#logout-btn {
+    padding: 10px 20px;
+    background: #f44336;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 0 auto;
+    display: block;
+}
+
+/* Blur overlay for unauthenticated users */
+.blur-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, 
+        rgba(255, 102, 178, 0.4), 
+        rgba(237, 11, 116, 0.35), 
+        rgba(255, 0, 204, 0.4),
+        rgba(255, 102, 178, 0.35));
+    background-size: 400% 400%;
+    backdrop-filter: blur(20px) saturate(150%);
+    z-index: 999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.6s ease-out, gradientFlow 15s ease infinite;
+}
+
+@keyframes gradientFlow {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.blur-overlay.hidden {
+    display: none;
+    animation: fadeOut 0.4s ease-out;
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+@font-face {
+    font-family: 'Montserrat-SemiBold';
+    src: url('Montserrat-SemiBold.ttf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+* {
+    font-family: 'Montserrat-SemiBold', sans-serif;
+    font-size: clamp(12px, 2vw + 1rem, 20px);
+}
+
+/* Стили для кнопок переключения */
+.switch-button {
+    text-align: center;
+    margin-top: 5px;
+}
+
+/* Медиа-запросы для мобильных устройств */
+@media screen and (max-width: 768px) {
+    body {
+        padding: 10px;
+        min-height: 100vh;
+    }
+    
+    .health-group-title {
+        font-size: clamp(18px, 6vw, 28px);
+        margin-bottom: 15px;
+        margin-top: 15px;
+    }
+    
+    body img {
+        width: 200px !important;
+        max-width: 80%;
+    }
+    
+    .glass-text {
+        font-size: clamp(24px, 8vw, 32px);
+        margin-bottom: 20px;
+        padding: 15px;
+    }
+    
+    /* Формы авторизации для мобильных */
+    #login-form, #register-form {
+        max-width: 90%;
+        padding: 25px 20px;
+        margin: 10px auto;
+    }
+    
+    .form-title {
+        font-size: 22px;
+    }
+    
+    .form-subtitle {
+        font-size: 12px;
+    }
+    
+    #login-form input, #register-form input {
+        padding: 12px 40px 12px 15px;
+        font-size: 14px;
+    }
+    
+    #login-btn, #register-btn {
+        padding: 12px 20px;
+        font-size: 15px;
+    }
+    
+    .switch-button {
+        font-size: 13px;
+        padding: 10px 15px;
+        margin-top: 10px;
+    }
+    
+    /* Кнопка выхода */
+    #logout-btn {
+        padding: 10px 20px;
+        font-size: 14px;
+        margin: 10px auto;
+    }
+    
+    /* Поиск для мобильных */
+    .search-container {
+        width: 90%;
+        max-width: 100%;
+        padding: 12px 20px;
+    }
+    
+    .search-input {
+        width: 100%;
+        max-width: 100%;
+        font-size: 14px;
+        padding: 10px 15px;
+    }
+    
+    /* Красный кружок для мобильных */
+    .hint-circle {
+        width: 150px;
+        height: 150px;
+    }
+    
+    .hint-text {
+        font-size: 13px;
+        padding: 15px;
+    }
+    
+    /* Выпадающий список */
+    .search-dropdown {
+        min-width: calc(100% - 40px);
+        max-width: 90%;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    
+    /* Контейнер комплексов */
+    #complex-container {
+        width: 90%;
+        max-width: 100%;
+        padding: 15px;
+        margin: 15px auto;
+    }
+    
+    /* Декоративные формы */
+    .shape {
+        display: none;
+    }
+    
+    /* Overlay для мобильных */
+    .blur-overlay {
+        padding: 20px 10px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    body {
+        padding: 5px;
+    }
+    
+    .health-group-title {
+        font-size: 18px;
+        margin-bottom: 10px;
+        margin-top: 10px;
+        letter-spacing: 1px;
+    }
+    
+    body img {
+        width: 150px !important;
+    }
+    
+    .glass-text {
+        font-size: 20px;
+        padding: 10px;
+    }
+    
+    #login-form, #register-form {
+        max-width: 95%;
+        padding: 20px 15px;
+        gap: 12px;
+    }
+    
+    .form-title {
+        font-size: 20px;
+    }
+    
+    .form-subtitle {
+        font-size: 11px;
+    }
+    
+    #login-form input, #register-form input {
+        padding: 10px 35px 10px 12px;
+        font-size: 13px;
+    }
+    
+    .input-wrapper .input-icon {
+        right: 12px;
+        font-size: 16px;
+    }
+    
+    #login-btn, #register-btn {
+        padding: 11px 18px;
+        font-size: 14px;
+    }
+    
+    .switch-button {
+        font-size: 12px;
+        padding: 9px 12px;
+    }
+    
+    .search-container {
+        width: 95%;
+        padding: 10px 15px;
+    }
+    
+    .search-input {
+        font-size: 13px;
+        padding: 9px 12px;
+    }
+    
+    .hint-circle {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .hint-text {
+        font-size: 11px;
+        padding: 12px;
+        line-height: 1.3;
+    }
+    
+    #complex-container {
+        padding: 12px;
+        margin: 10px auto;
+    }
+    
+    #complex-container img {
+        max-width: 100%;
+        height: auto;
+    }
+}
+
+/* Горизонтальная ориентация на мобильных */
+@media screen and (max-width: 768px) and (orientation: landscape) {
+    .health-group-title {
+        font-size: 20px;
+        margin-bottom: 10px;
+        margin-top: 10px;
+    }
+    
+    body img {
+        width: 150px !important;
+    }
+    
+    .glass-text {
+        font-size: 24px;
+        margin-bottom: 15px;
+    }
+    
+    #login-form, #register-form {
+        max-width: 400px;
+        padding: 20px;
+    }
+    
+    .hint-circle {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .hint-text {
+        font-size: 10px;
+        padding: 10px;
+    }
+}

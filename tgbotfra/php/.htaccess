@@ -1,0 +1,7 @@
+# Не отдавать конфиги по URL (BOT_TOKEN, пароль БД)
+<Files "config.local.php">
+    Require all denied
+</Files>
+<Files "config.local.php.example">
+    Require all denied
+</Files>

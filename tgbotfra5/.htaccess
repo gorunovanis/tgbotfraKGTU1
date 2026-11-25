@@ -1,0 +1,13 @@
+# Маршрутизация API на php/api.php (для PHP-версии без Python)
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    # Запретить доступ по URL к конфигам (пароли и токен!)
+    RewriteRule ^(tgbotfra/)?php/config\.local\.php - [F,L]
+    RewriteRule ^(tgbotfra/)?php/config\.local\.php\.example - [F,L]
+    # Не трогать существующие файлы и каталоги (static/, php/, .env и т.д.)
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+    # Остальное отдавать в API (profile, water, meals, steps, stats, workouts, ai, coach)
+    RewriteRule ^(.*)$ php/api.php?path=$1 [QSA,L]
+</IfModule>
