@@ -13,35 +13,62 @@
 
 ---
 
-## FoodApp (`tgbotfra5/`, `tgbotfra/`, `tgbotfra1/`)
+## Быстрый старт (FoodApp — `tgbotfra5/`)
 
-Веб-приложение для учёта питания (КБЖУ), воды, шагов, тренировок и профиля пользователя.
+### Требования
+- **PHP 7.4+** с расширениями `pdo_mysql`, `session`, `json`
+- **MySQL / MariaDB**
+- **Apache** с включённым `mod_rewrite` (для работы `.htaccess`, например XAMPP / OpenServer / хостинг)
 
-### Стек технологий
-- **Backend:** PHP 7.4+ (`pdo_mysql`, `session`, `json`)
-- **База данных:** MySQL / MariaDB
-- **Frontend:** HTML, CSS, Vanilla JavaScript (`static/app/`)
-- **Веб-сервер:** Apache с `mod_rewrite` (`.htaccess`)
+### Пошаговый запуск
 
-### Быстрый старт (на примере `tgbotfra5/`)
+1. **Клонируйте репозиторий:**
+   ```bash
+   git clone https://github.com/gorunovanis/tgbotfraKGTU1.git
+   cd tgbotfraKGTU1/tgbotfra5
+   ```
 
-1. **База данных:** создайте базу в MySQL и импортируйте `tgbotfra5/schema_mysql.sql` (при обновлении со старой схемы используйте `schema_migration_rename_tables_fra_to_ff.sql` и/или `schema_migration_site_auth.sql`).
-2. **Конфигурация:** скопируйте `tgbotfra5/php/config.local.php.example` в `tgbotfra5/php/config.local.php` и укажите:
-   - `BASE_URL` — URL проекта без пути к конкретной странице (например, `https://example.com/tgbotfra5`);
-   - параметры подключения к MySQL (`DB_HOST`, `DB_NAME`, `DB_USER`, `DB_PASS`).
-3. **Запуск:** загрузите папку на хостинг с Apache (`mod_rewrite`) и PHP, после чего откройте `static/app/` (или `static/index.html`) в браузере.
+2. **Создайте базу данных и импортируйте таблицы:**
+   Создайте БД в MySQL (например, `foodapp`) и выполните `schema_mysql.sql`:
+   ```bash
+   mysql -u root -p -e "CREATE DATABASE foodapp CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+   mysql -u root -p foodapp < schema_mysql.sql
+   ```
+   *(Если обновляете старую базу с таблицами `*_fra` или без авторизации по email, выполните также `schema_migration_rename_tables_fra_to_ff.sql` и `schema_migration_site_auth.sql`.)*
 
-Подробная инструкция находится в файле `tgbotfra5/КАК_ЗАПУСТИТЬ.md`.
+3. **Настройте `php/config.local.php`:**
+   Скопируйте шаблон `php/config.local.php.example` в `php/config.local.php`:
+   ```bash
+   cp php/config.local.php.example php/config.local.php
+   ```
+   И укажите свои данные:
+   ```php
+   <?php
+   return [
+       // Корень проекта без /static/app/... (для локального сервера: http://localhost/tgbotfra5)
+       'BASE_URL'   => 'https://ваш-домен.ru/tgbotfra5',
+       'DB_HOST'    => 'localhost',
+       'DB_PORT'    => 3306,
+       'DB_USER'    => 'root',
+       'DB_PASS'    => 'ваш_пароль',
+       'DB_NAME'    => 'foodapp',
+       'DB_CHARSET' => 'utf8mb4',
+   ];
+   ```
+
+4. **Разместите на сервере и откройте приложение:**
+   - Скопируйте содержимое `tgbotfra5/` в папку веб-сервера (Apache с `.htaccess` и `mod_rewrite`).
+   - Для проверки конфигурации откройте `.../php/check_setup.php` (после проверки удалите этот файл с продакшена).
+   - Откройте приложение в браузере: `.../static/app/` (или лендинг `.../static/index.html`).
+
+Подробности и разбор возможных проблем с сессией — в файле [`tgbotfra5/КАК_ЗАПУСТИТЬ.md`](tgbotfra5/КАК_ЗАПУСТИТЬ.md).
 
 ---
 
-## FitHealth39 (`rayXlain.github.io-main/`)
+## Быстрый старт (FitHealth39 — `rayXlain.github.io-main/`)
 
-Прототип клиентского интерфейса и набор модулей для работы с базой данных `kuzbassmeg`:
-- `index.html`, `style.css`, `script.js` — интерфейс поиска и подбора;
-- `database.sql`, `database_setup.md` — структура БД и инструкция по развёртыванию;
-- `db_connection.php`, `db_connection.js`, `db_connection.py`, `api_example.php`, `api_example.js` — примеры подключения и API;
-- `CONNECTION_README.md` — краткое руководство по подключению к БД.
+1. Откройте `rayXlain.github.io-main/index.html` в браузере (или через локальный сервер) для просмотра клиентского интерфейса.
+2. Для работы с БД `kuzbassmeg` импортируйте `rayXlain.github.io-main/database.sql` в MySQL и настройте подключение в `config.php`, `db_connection.php`, `db_connection.js` или `db_connection.py` (см. [`rayXlain.github.io-main/CONNECTION_README.md`](rayXlain.github.io-main/CONNECTION_README.md)).
 
 ---
 
